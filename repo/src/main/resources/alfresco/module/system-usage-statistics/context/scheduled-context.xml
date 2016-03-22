@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+  <bean id="rl.clusteredExecuter" class="org.redpill.alfresco.repo.statistics.jobs.ClusteredExecuter" abstract="true">
+    <property name="jobLockService" ref="jobLockService" />
+    <property name="transactionService" ref="TransactionService" />
+    <property name="lockTTL" value="30000" />
+    <property name="repositoryState" ref="repositoryState" />
+  </bean>
+
+  <!-- ****************************************************************** -->
+  <!-- Job for generating user statistics -->
+  <!-- ****************************************************************** -->
+
+  <bean id="rl.generateUserStatistics" class="org.redpill.alfresco.repo.statistics.jobs.GenerateUserStatistics" parent="rl.clusteredExecuter">
+    <property name="activeUsers" ref="rl.reportActiveUsers" />
+    <property name="repository" ref="repositoryHelper" />
+    <property name="contentService" ref="ContentService" />
+    <property name="fileFolderService" ref="FileFolderService" />
+    <property name="nodeService" ref="NodeService" />
+    <property name="namespaceService" ref="NamespaceService" />
+    <property name="searchService" ref="SearchService" />
+  </bean>
+
+  <bean id="rl.generateUserStatisticsJobDetail" class="org.springframework.scheduling.quartz.JobDetailBean">
+    <property name="jobClass" value="org.redpill.alfresco.repo.statistics.jobs.GenerateUserStatisticsJob" />
+    <property name="jobDataAsMap">
+      <map>
+        <entry key="generateUserStatistics" value-ref="rl.generateUserStatistics" />
+      </map>
+    </property>
+  </bean>
+
+  <bean id="rl.generateUserStatisticsTrigger" class="org.alfresco.util.CronTriggerBean">
+    <property name="jobDetail" ref="rl.generateUserStatisticsJobDetail" />
+    <property name="scheduler" ref="schedulerFactory" />
+    <property name="cronExpression" value="${rl.statistics.jobs.userStatistics.cron}" />
+    <property name="enabled" value="${rl.statistics.jobs.userStatistics.enabled}" />
+  </bean>
+
+  <!-- ****************************************************************** -->
+  <!-- Job for generating site statistics -->
+  <!-- ****************************************************************** -->
+
+  <bean id="rl.generateSiteStatistics" class="org.redpill.alfresco.repo.statistics.jobs.GenerateSiteStatistics" parent="rl.clusteredExecuter">
+    <property name="reportSiteUsage" ref="rl.reportSiteUsage" />
+    <property name="repository" ref="repositoryHelper" />
+    <property name="contentService" ref="ContentService" />
+    <property name="fileFolderService" ref="FileFolderService" />
+    <property name="nodeService" ref="NodeService" />
+    <property name="namespaceService" ref="NamespaceService" />
+    <property name="searchService" ref="SearchService" />
+    <property name="siteService" ref="SiteService" />
+  </bean>
+
+  <bean id="rl.generateSiteStatisticsJobDetail" class="org.springframework.scheduling.quartz.JobDetailBean">
+    <property name="jobClass" value="org.redpill.alfresco.repo.statistics.jobs.GenerateSiteStatisticsJob" />
+    <property name="jobDataAsMap">
+      <map>
+        <entry key="generateSiteStatistics" value-ref="rl.generateSiteStatistics" />
+      </map>
+    </property>
+  </bean>
+
+  <bean id="rl.generateSiteStatisticsTrigger" class="org.alfresco.util.CronTriggerBean">
+    <property name="jobDetail" ref="rl.generateSiteStatisticsJobDetail" />
+    <property name="scheduler" ref="schedulerFactory" />
+    <property name="cronExpression" value="${rl.statistics.jobs.siteStatistics.cron}" />
+    <property name="enabled" value="${rl.statistics.jobs.siteStatistics.enabled}" />
+  </bean>
+  
+  <!-- ****************************************************************** -->
+  <!-- Job for generating summary statistics -->
+  <!-- ****************************************************************** -->
+
+  <bean id="rl.generateSummaryStatistics" class="org.redpill.alfresco.repo.statistics.jobs.GenerateSummaryStatistics" parent="rl.clusteredExecuter">
+    <property name="summaryReport" ref="rl.summaryReport" />
+    <property name="repository" ref="repositoryHelper" />
+    <property name="contentService" ref="ContentService" />
+    <property name="fileFolderService" ref="FileFolderService" />
+    <property name="nodeService" ref="NodeService" />
+    <property name="namespaceService" ref="NamespaceService" />
+    <property name="searchService" ref="SearchService" />
+    <property name="siteService" ref="SiteService" />
+  </bean>
+
+  <bean id="rl.generateSummaryStatisticsJobDetail" class="org.springframework.scheduling.quartz.JobDetailBean">
+    <property name="jobClass" value="org.redpill.alfresco.repo.statistics.jobs.GenerateSummaryStatisticsJob" />
+    <property name="jobDataAsMap">
+      <map>
+        <entry key="generateSummaryStatistics" value-ref="rl.generateSummaryStatistics" />
+      </map>
+    </property>
+  </bean>
+
+  <bean id="rl.generateSummaryStatisticsTrigger" class="org.alfresco.util.CronTriggerBean">
+    <property name="jobDetail" ref="rl.generateSummaryStatisticsJobDetail" />
+    <property name="scheduler" ref="schedulerFactory" />
+    <property name="cronExpression" value="${rl.statistics.jobs.summaryStatistics.cron}" />
+    <property name="enabled" value="${rl.statistics.jobs.summaryStatistics.enabled}" />
+  </bean>
+  
+  
+</beans>
