@@ -42,7 +42,7 @@ public class GenerateSummaryStatistics extends ClusteredExecuter {
   protected SiteService siteService;
 
   public final String XPATH_DATA_DICTIONARY = "/app:company_home/app:dictionary";
-  public final String FOLDER_NAME_VGR = "VGR";
+  public final String FOLDER_NAME_REDPILL_LINPRO = "Redpill-Linpro";
   public final String FOLDER_NAME_STATISTICS = "Statistics";
   public final String FOLDER_NAME_SITE_STATISTICS = "SummaryStatistics";
 
@@ -80,12 +80,12 @@ public class GenerateSummaryStatistics extends ClusteredExecuter {
 
   @Override
   protected String getJobName() {
-    return "Generate Site Statistics";
+    return "Generate Summary Statistics";
   }
 
   @Override
   protected void executeInternal() {
-    LOG.info("Starting generation of site statistics");
+    LOG.info("Starting generation of summary statistics");
     AuthenticationUtil.runAs(new RunAsWork<Void>() {
       @Override
       public Void doWork() throws Exception {
@@ -114,7 +114,7 @@ public class GenerateSummaryStatistics extends ClusteredExecuter {
         return null;
       }
     }, AuthenticationUtil.SYSTEM_USER_NAME);
-    LOG.info("Finished generating site statistics");
+    LOG.info("Finished generating summary statistics");
   }
 
   public String createJson(Map<String, Long> statistics) {
@@ -129,14 +129,14 @@ public class GenerateSummaryStatistics extends ClusteredExecuter {
     if (LOG.isTraceEnabled()) {
       LOG.trace("Looked up data dictionary: " + dataDictionaryNodeRef);
     }
-    NodeRef vgrNodeRef = nodeService.getChildByName(dataDictionaryNodeRef, ContentModel.ASSOC_CONTAINS, FOLDER_NAME_VGR);
-    if (vgrNodeRef == null) {
-      vgrNodeRef = fileFolderService.create(dataDictionaryNodeRef, FOLDER_NAME_VGR, ContentModel.TYPE_FOLDER).getNodeRef();
+    NodeRef rlNodeRef = nodeService.getChildByName(dataDictionaryNodeRef, ContentModel.ASSOC_CONTAINS, FOLDER_NAME_REDPILL_LINPRO);
+    if (rlNodeRef == null) {
+      rlNodeRef = fileFolderService.create(dataDictionaryNodeRef, FOLDER_NAME_REDPILL_LINPRO, ContentModel.TYPE_FOLDER).getNodeRef();
     }
 
-    NodeRef statisticsNodeRef = nodeService.getChildByName(vgrNodeRef, ContentModel.ASSOC_CONTAINS, FOLDER_NAME_STATISTICS);
+    NodeRef statisticsNodeRef = nodeService.getChildByName(rlNodeRef, ContentModel.ASSOC_CONTAINS, FOLDER_NAME_STATISTICS);
     if (statisticsNodeRef == null) {
-      statisticsNodeRef = fileFolderService.create(vgrNodeRef, FOLDER_NAME_STATISTICS, ContentModel.TYPE_FOLDER).getNodeRef();
+      statisticsNodeRef = fileFolderService.create(rlNodeRef, FOLDER_NAME_STATISTICS, ContentModel.TYPE_FOLDER).getNodeRef();
     }
 
     NodeRef userStatisticsNodeRef = nodeService.getChildByName(statisticsNodeRef, ContentModel.ASSOC_CONTAINS, FOLDER_NAME_SITE_STATISTICS);

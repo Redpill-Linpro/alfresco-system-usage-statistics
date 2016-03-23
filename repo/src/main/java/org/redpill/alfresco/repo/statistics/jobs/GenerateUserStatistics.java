@@ -64,7 +64,7 @@ public class GenerateUserStatistics extends ClusteredExecuter {
   }
 
   public final String XPATH_DATA_DICTIONARY = "/app:company_home/app:dictionary";
-  public final String FOLDER_NAME_VGR = "VGR";
+  public final String FOLDER_NAME_REDPILL_LINPRO = "Redpill-Linpro";
   public final String FOLDER_NAME_STATISTICS = "Statistics";
   public final String FOLDER_NAME_USER_STATISTICS = "UserStatistics";
 
@@ -117,14 +117,14 @@ public class GenerateUserStatistics extends ClusteredExecuter {
     if (LOG.isTraceEnabled()) {
       LOG.trace("Looked up data dictionary: " + dataDictionaryNodeRef);
     }
-    NodeRef vgrNodeRef = nodeService.getChildByName(dataDictionaryNodeRef, ContentModel.ASSOC_CONTAINS, FOLDER_NAME_VGR);
-    if (vgrNodeRef == null) {
-      vgrNodeRef = fileFolderService.create(dataDictionaryNodeRef, FOLDER_NAME_VGR, ContentModel.TYPE_FOLDER).getNodeRef();
+    NodeRef rlNodeRef = nodeService.getChildByName(dataDictionaryNodeRef, ContentModel.ASSOC_CONTAINS, FOLDER_NAME_REDPILL_LINPRO);
+    if (rlNodeRef == null) {
+      rlNodeRef = fileFolderService.create(dataDictionaryNodeRef, FOLDER_NAME_REDPILL_LINPRO, ContentModel.TYPE_FOLDER).getNodeRef();
     }
 
-    NodeRef statisticsNodeRef = nodeService.getChildByName(vgrNodeRef, ContentModel.ASSOC_CONTAINS, FOLDER_NAME_STATISTICS);
+    NodeRef statisticsNodeRef = nodeService.getChildByName(rlNodeRef, ContentModel.ASSOC_CONTAINS, FOLDER_NAME_STATISTICS);
     if (statisticsNodeRef == null) {
-      statisticsNodeRef = fileFolderService.create(vgrNodeRef, FOLDER_NAME_STATISTICS, ContentModel.TYPE_FOLDER).getNodeRef();
+      statisticsNodeRef = fileFolderService.create(rlNodeRef, FOLDER_NAME_STATISTICS, ContentModel.TYPE_FOLDER).getNodeRef();
     }
 
     NodeRef userStatisticsNodeRef = nodeService.getChildByName(statisticsNodeRef, ContentModel.ASSOC_CONTAINS, FOLDER_NAME_USER_STATISTICS);
