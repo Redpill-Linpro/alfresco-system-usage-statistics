@@ -82,7 +82,11 @@ if (typeof RL == "undefined" || !RL) {
         this.timerShowLoadingMessage.cancel();
       }
       if (this.loadingMessage) {
-        this.loadingMessage.destroy();
+        try {
+          this.loadingMessage.destroy();
+        } catch (err) {
+
+        }
       }
       if (response != null && response.json != null) {
         var items = response.json.items;
@@ -101,7 +105,11 @@ if (typeof RL == "undefined" || !RL) {
         this.timerShowLoadingMessage.cancel();
       }
       if (this.loadingMessage) {
-        this.loadingMessage.destroy();
+        try {
+          this.loadingMessage.destroy();
+        } catch (err) {
+
+        }
       }
     };
     this.OnChangeYearFilter = function(evt) {
@@ -127,7 +135,11 @@ if (typeof RL == "undefined" || !RL) {
         parent.timerShowLoadingMessage.cancel();
       }
       if (parent.loadingMessage) {
-        parent.loadingMessage.destroy();
+        try {
+          this.loadingMessage.destroy();
+        } catch (err) {
+
+        }
       }
       if (response != null && response.json != null) {
         parent.data.selectionData = response.json;
@@ -149,7 +161,11 @@ if (typeof RL == "undefined" || !RL) {
         parent.timerShowLoadingMessage.cancel();
       }
       if (parent.loadingMessage) {
-        parent.loadingMessage.destroy();
+        try {
+          this.loadingMessage.destroy();
+        } catch (err) {
+
+        }
       }
     };
     this.SelectStatisticsRow = function(evt) {
@@ -176,7 +192,11 @@ if (typeof RL == "undefined" || !RL) {
         parent.timerShowLoadingMessage.cancel();
       }
       if (parent.loadingMessage) {
-        parent.loadingMessage.destroy();
+        try {
+          this.loadingMessage.destroy();
+        } catch (err) {
+
+        }
       }
       if (response != null && response.json != null) {
         
@@ -197,7 +217,11 @@ if (typeof RL == "undefined" || !RL) {
         parent.timerShowLoadingMessage.cancel();
       }
       if (parent.loadingMessage) {
-        parent.loadingMessage.destroy();
+        try {
+          this.loadingMessage.destroy();
+        } catch (err) {
+
+        }
       }
     };
     YAHOO.extend(ListPanelHandler, Alfresco.ConsolePanelHandler, {
