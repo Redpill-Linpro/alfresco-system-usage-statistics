@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+  
+  <!-- ***************************************************************************************************** -->
+  <!-- Report site statistics web script and utility classes -->
+  <!-- *****************************************************************************************************
+
+  <bean id="webscript.reports.sites.sites.get" class="org.redpill.alfresco.repo.statistics.scripts.SitesReport" parent="webscript">
+    <property name="siteService" ref="SiteService" />
+  </bean>
+
+  <bean id="rl.siteReport" class="org.redpill.alfresco.repo.statistics.scripts.ScriptSiteReport" parent="baseJavaScriptExtension">
+    <property name="extensionName" value="siteReport" />
+    <property name="siteService" ref="SiteService" />
+    <property name="reportSiteUsage" ref="rl.reportSiteUsage" />
+  </bean> -->
+
+  <bean id="rl.reportSiteUsage" class="org.redpill.alfresco.repo.statistics.service.ReportSiteUsage">
+    <property name="activityService" ref="activityService" />
+    <property name="fileFolderService" ref="FileFolderService" />
+    <property name="nodeService" ref="NodeService" />
+    <property name="siteService" ref="SiteService" />
+    <property name="personService" ref="PersonService" />
+  </bean>
+
+  <!-- ***************************************************************************************************** -->
+  <!-- Report active users statistics web script and utility classes -->
+  <!-- ***************************************************************************************************** 
+
+  <bean id="webscript.reports.users.activeusers.get" class="org.redpill.alfresco.repo.statistics.scripts.ActiveUsersReport" parent="webscript">
+    <property name="activeUsers" ref="rl.reportActiveUsers" />
+  </bean>-->
+
+  <bean id="rl.reportActiveUsers" class="org.redpill.alfresco.repo.statistics.service.ActiveUsers">
+    <property name="nodeService" ref="NodeService" />
+    <property name="personService" ref="PersonService" />
+    <property name="auditService" ref="AuditService" />
+    <property name="minLoginsTrackingLimit" value="${rl.statistics.minLoginsTrackingLimit}" />
+    <property name="daysBackTrackingLimit" value="${rl.statistics.daysBackTrackingLimit}" />
+    <property name="internalUsersZoneName" value="${rl.statistics.internalUsersZoneName}" />
+  </bean>
+
+  <!-- ***************************************************************************************************** -->
+  <!-- Report summary statistics utility class -->
+  <!-- ***************************************************************************************************** -->
+  <bean id="rl.summaryReport" class="org.redpill.alfresco.repo.statistics.service.SummaryReport">
+    <property name="reportSiteUsage" ref="rl.reportSiteUsage" />
+    <property name="activeUsers" ref="rl.reportActiveUsers" />
+    <property name="searchService" ref="SearchService" />
+    <property name="siteService" ref="SiteService" />
+    <property name="personService" ref="PersonService" />
+    <property name="daysBackTrackingLimit" value="${rl.statistics.daysBackTrackingLimit}" />
+  </bean>
+</beans>
+  

@@ -1,0 +1,46 @@
+.statistics-console {
+    margin: 16px 10px 10px;
+}
+
+.statistics-console .title {
+    font-size: 123.1%;
+    font-weight: bold;
+    padding-bottom: 0.5em;
+}
+
+.statistics-console .jsbox {
+    font-family: "Courier New", Courier, monospace !important;
+    color: black;
+    border: 1px solid #c0c0c0;
+    padding: 0.5em;
+    white-space: pre-wrap;
+}
+
+.statistics-console .header-bar {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    padding: 0.2em;
+    height: 1.2em;
+    background-color: #e3eaec;
+    border-bottom: 2px solid #f0f3f4;
+    font-weight: bold;
+    font-size: 116%;
+}
+
+.statistics-console .button-bar {
+    padding-top: 10px;
+}
+
+.statistics-console .statistics-missing-table {
+    margin: 10px 0;
+    border: 1px solid #c0c0c0;
+}
+
+.statistics-console .statistics-missing-list {
+    width: 99%;
+}
+
+.statistics-console .statistics-missing-table th {
+    background-color: #e3eaec;
+    padding-right: 10px;
+}

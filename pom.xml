@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.redpill-linpro.alfresco</groupId>
+    <artifactId>alfresco-base</artifactId>
+    <version>2.1.1</version>
+  </parent>
+
+
+  <groupId>org.redpill-linpro.alfresco.statistics</groupId>
+  <artifactId>alfresco-system-usage-statistics</artifactId>
+  <version>1.0.0</version>
+  <name>Alfresco System Usage Statistics</name>
+  <packaging>pom</packaging>
+
+  <properties>
+    <alfresco.groupId>org.alfresco</alfresco.groupId>
+    <alfresco.version>5.0.d</alfresco.version>
+    <testframework.version>2.1.1</testframework.version>
+    <java.source.version>1.8</java.source.version>
+    <java.target.version>1.8</java.target.version>
+  </properties>
+
+  <modules>
+    <module>repo</module>
+    <module>share</module>
+  </modules>
+
+  <developers>
+    <developer>
+      <id>mars</id>
+      <name>Marcus Svartmark</name>
+      <email>marcus.svartmark (at) redpill-linpro.com</email>
+      <organization>Redpill Linpro AB</organization>
+      <organizationUrl>http://www.redpill-linpro.com</organizationUrl>
+      <roles>
+        <role>Founder</role>
+        <role>Architect</role>
+        <role>Developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+  </developers>
+
+  <contributors>
+    <contributor />
+  </contributors>
+
+  <scm>
+    <connection>scm:git@github.com:Redpill-Linpro/alfresco-system-user-statistics.git</connection>
+    <developerConnection>scm:git@github.com:Redpill-Linpro/alfresco-system-user-statistics.git</developerConnection>
+    <url>scm:git@github.com:Redpill-Linpro/alfresco-system-user-statistics.git</url>
+  </scm>
+
+  <issueManagement>
+    <system>Github</system>
+    <url>https://github.com/Redpill-Linpro/alfresco-system-user-statistics/issues</url>
+  </issueManagement>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.redpill-linpro.alfresco</groupId>
+        <artifactId>alfresco-test-repo</artifactId>
+        <version>${testframework.version}</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <repositories>
+    <repository>
+      <id>redpill-public</id>
+      <url>https://maven.redpill-linpro.com/nexus/content/groups/public</url>
+    </repository>
+  </repositories>
+
+</project>
+
+

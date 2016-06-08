@@ -1,0 +1,6 @@
+<webscript>
+  <shortname>Admin Console Site Statistics Console</shortname>
+  <description>Administration Console - Alfresco Site Statistics Console</description>
+  <url>/components/console/site-statistics-console</url>
+  <family>admin-console</family>
+</webscript>
