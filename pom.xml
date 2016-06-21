@@ -7,22 +7,21 @@
   <parent>
     <groupId>com.redpill-linpro.alfresco</groupId>
     <artifactId>alfresco-base</artifactId>
-    <version>2.1.1</version>
+    <version>1.1.1.22</version>
   </parent>
 
 
   <groupId>org.redpill-linpro.alfresco.statistics</groupId>
   <artifactId>alfresco-system-usage-statistics</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1-SNAPSHOT</version>
   <name>Alfresco System Usage Statistics</name>
   <packaging>pom</packaging>
 
   <properties>
     <alfresco.groupId>org.alfresco</alfresco.groupId>
-    <alfresco.version>5.0.d</alfresco.version>
-    <testframework.version>2.1.1</testframework.version>
-    <java.source.version>1.8</java.source.version>
-    <java.target.version>1.8</java.target.version>
+    <alfresco.version>4.2.f</alfresco.version>
+    <java.source.version>1.7</java.source.version>
+    <java.target.version>1.7</java.target.version>
   </properties>
 
   <modules>
@@ -60,17 +59,6 @@
     <system>Github</system>
     <url>https://github.com/Redpill-Linpro/alfresco-system-user-statistics/issues</url>
   </issueManagement>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.redpill-linpro.alfresco</groupId>
-        <artifactId>alfresco-test-repo</artifactId>
-        <version>${testframework.version}</version>
-        <scope>test</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
   <repositories>
     <repository>
