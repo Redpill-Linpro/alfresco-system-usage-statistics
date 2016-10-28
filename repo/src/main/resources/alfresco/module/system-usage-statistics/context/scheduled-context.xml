@@ -71,6 +71,38 @@
   </bean>
   
   <!-- ****************************************************************** -->
+  <!-- Job for generating user email statistics -->
+  <!-- ****************************************************************** -->
+
+  <bean id="rl.generateUserEmailStatistics" class="org.redpill.alfresco.repo.statistics.jobs.GenerateUserEmailStatistics" parent="rl.clusteredExecuter">
+    <property name="reportSiteUsage" ref="rl.reportSiteUsage" />
+    <property name="repository" ref="repositoryHelper" />
+    <property name="contentService" ref="ContentService" />
+    <property name="fileFolderService" ref="FileFolderService" />
+    <property name="nodeService" ref="NodeService" />
+    <property name="namespaceService" ref="NamespaceService" />
+    <property name="searchService" ref="SearchService" />
+    <property name="siteService" ref="SiteService" />
+    <property name="personService" ref="PersonService" />
+  </bean>
+
+  <bean id="rl.generateUserEmailStatisticsJobDetail" class="org.springframework.scheduling.quartz.JobDetailBean">
+    <property name="jobClass" value="org.redpill.alfresco.repo.statistics.jobs.GenerateUserEmailStatisticsJob" />
+    <property name="jobDataAsMap">
+      <map>
+        <entry key="generateUserEmailStatistics" value-ref="rl.generateUserEmailStatistics" />
+      </map>
+    </property>
+  </bean>
+
+  <bean id="rl.generateUserEmailStatisticsTrigger" class="org.alfresco.util.CronTriggerBean">
+    <property name="jobDetail" ref="rl.generateUserEmailStatisticsJobDetail" />
+    <property name="scheduler" ref="schedulerFactory" />
+    <property name="cronExpression" value="${rl.statistics.jobs.userEmailStatistics.cron}" />
+    <property name="enabled" value="${rl.statistics.jobs.userEmailStatistics.enabled}" />
+  </bean>
+
+  <!-- ****************************************************************** -->
   <!-- Job for generating summary statistics -->
   <!-- ****************************************************************** -->
 

@@ -1,0 +1,6 @@
+<webscript>
+  <shortname>Admin Console User Email Statistics Console</shortname>
+  <description>Administration Console - Alfresco User Email Statistics Console</description>
+  <url>/components/console/user-email-statistics-console</url>
+  <family>admin-console</family>
+</webscript>
