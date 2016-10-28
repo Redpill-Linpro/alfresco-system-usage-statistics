@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.alfresco.model.ContentModel;
+import org.alfresco.query.PagingRequest;
 import org.alfresco.service.cmr.activities.ActivityService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
@@ -63,7 +65,8 @@ public class ReportSiteUsage implements InitializingBean {
   /**
    * Get the total size for all files and folders in a site in bytes
    *
-   * @param shortName site short name
+   * @param shortName
+   *          site short name
    * @return
    */
   public long getSiteSize(String shortName) {
@@ -121,7 +124,8 @@ public class ReportSiteUsage implements InitializingBean {
   /**
    * Get the number of members of a site
    *
-   * @param siteShortName site short name
+   * @param siteShortName
+   *          site short name
    * @return
    */
   public int getNumberOfSiteMembers(String siteShortName) {
@@ -167,7 +171,8 @@ public class ReportSiteUsage implements InitializingBean {
   /**
    * Get last activity on site (date)
    *
-   * @param site site info object
+   * @param site
+   *          site info object
    * @return the last activity date
    * @throws Exception
    */
@@ -226,6 +231,89 @@ public class ReportSiteUsage implements InitializingBean {
     return sitesResult;
   }
 
+  /**
+   * Returns a list of all users on a site with email
+   *
+   * @param siteShortName
+   * @return
+   */
+  public List<Map<String, Serializable>> getAllUsersOnSite(String siteShortName) {
+    if (LOG.isTraceEnabled()) {
+      LOG.trace("Getting all users on site: " + siteShortName);
+    }
+    List<Map<String, Serializable>> result = new ArrayList<Map<String, Serializable>>();
+
+    Map<String, String> listMembers = _siteService.listMembers(siteShortName, null, null, 0, true);
+    Set<String> keySet = listMembers.keySet();
+    for (String userName : keySet) {
+      NodeRef personNodeRef = _personService.getPersonOrNull(userName);
+      if (personNodeRef != null) {
+        PersonInfo person = _personService.getPerson(personNodeRef);
+
+        Map<String, Serializable> personMap = new HashMap<String, Serializable>();
+        personMap.put("userName", person.getUserName());
+        personMap.put("fullName", person.getFirstName() + " " + person.getLastName());
+        personMap.put("email", _nodeService.getProperty(personNodeRef, ContentModel.PROP_EMAIL));
+        result.add(personMap);
+      }
+
+    }
+    return result;
+
+  }
+
+  public String getFullName(String siteShortName) {
+    String result = null;
+    if (LOG.isTraceEnabled()) {
+      LOG.trace("Getting all users on site: " + siteShortName);
+    }
+
+    Map<String, String> listMembers = _siteService.listMembers(siteShortName, null, null, 0, true);
+    Set<String> keySet = listMembers.keySet();
+    for (String userName : keySet) {
+      NodeRef personNodeRef = _personService.getPersonOrNull(userName);
+      if (personNodeRef != null) {
+        PersonInfo person = _personService.getPerson(personNodeRef);
+        result = (person.getFirstName() + " " + person.getLastName());
+      }
+    }
+    return result;
+  }
+  public String getUserId(String siteShortName) {
+    String result = null;
+    if (LOG.isTraceEnabled()) {
+      LOG.trace("Getting all users on site: " + siteShortName);
+    }
+
+    Map<String, String> listMembers = _siteService.listMembers(siteShortName, null, null, 0, true);
+    Set<String> keySet = listMembers.keySet();
+    for (String userName : keySet) {
+      NodeRef personNodeRef = _personService.getPersonOrNull(userName);
+      if (personNodeRef != null) {
+        PersonInfo person = _personService.getPerson(personNodeRef);
+        result = (person.getUserName());
+      }
+    }
+    return result;
+  }
+  public String getEmail(String siteShortName) {
+    String result = null;
+    if (LOG.isTraceEnabled()) {
+      LOG.trace("Getting all users on site: " + siteShortName);
+    }
+
+    Map<String, String> listMembers = _siteService.listMembers(siteShortName, null, null, 0, true);
+    Set<String> keySet = listMembers.keySet();
+    for (String userName : keySet) {
+      NodeRef personNodeRef = _personService.getPersonOrNull(userName);
+      
+      if (personNodeRef != null) {
+        result = (_nodeService.getProperty(personNodeRef, ContentModel.PROP_EMAIL).toString());
+      }
+    }
+    return result;
+  }
+  
   @Override
   public void afterPropertiesSet() throws Exception {
     Assert.notNull(_activityService);

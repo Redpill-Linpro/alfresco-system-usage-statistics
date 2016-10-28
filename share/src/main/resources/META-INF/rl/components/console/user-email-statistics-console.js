@@ -114,7 +114,7 @@ if (typeof RL == "undefined" || !RL) {
       var target = option.value;
       parent.timerShowLoadingMessage = YAHOO.lang.later(2000, this, parent.fnShowLoadingMessage);
       Alfresco.util.Ajax.request({
-        url: Alfresco.constants.PROXY_URI + "/slingshot/doclib2/doclist/all/node/alfresco/company/home/Data%20Dictionary/Redpill-Linpro/Statistics/SiteStatistics/" + target + "?sortField=cm%3acreated&sortAsc=false",
+        url: Alfresco.constants.PROXY_URI + "/slingshot/doclib2/doclist/all/node/alfresco/company/home/Data%20Dictionary/Redpill-Linpro/Statistics/UserEmailStatistics/" + target + "?sortField=cm%3acreated&sortAsc=false",
         responseContentType: Alfresco.util.Ajax.JSON,
         method: Alfresco.util.Ajax.GET,
         successCallback: {
@@ -285,33 +285,62 @@ if (typeof RL == "undefined" || !RL) {
       _setupDataStatsTables: function() {
         var renderCellTitle = function(cell, record, column, data) {
           var href = Alfresco.constants.URL_PAGECONTEXT + Alfresco.constants.URI_TEMPLATES.sitedashboardpage;
-          href = href.replace("//","/").replace("{site}", record.getData().shortName);
+          href = href.replace("//","/").replace("{site}", data);
           cell.innerHTML += "<a href='" + href + "' target='_blank'>" + data +"</a>";
         };
+        var renderCellRole = function(cell, record, column, data) {
+            cell.innerHTML = $html(data);
+          };
         var renderCellShortName = function(cell, record, column, data) {
           var href = Alfresco.constants.URL_PAGECONTEXT + Alfresco.constants.URI_TEMPLATES.sitedashboardpage;
           href = href.replace("//","/").replace("{site}", data);
           cell.innerHTML += "<a href='" + href + "' target='_blank'>" + data +"</a>";
         };
-        var renderCellMembers = function(cell, record, column, data) {
+        var renderCellFullName = function(cell, record, column, data) {
+          var href = Alfresco.constants.URL_PAGECONTEXT + Alfresco.constants.URI_TEMPLATES.userprofilepage;
+          href = href.replace("//","/").replace("{userid}", data);
+          cell.innerHTML += "<a href='" + href + "' target='_blank'>" + data +"</a>";
+        };
+        var renderCellUserName = function(cell, record, column, data) {
+          var href = Alfresco.constants.URL_PAGECONTEXT + Alfresco.constants.URI_TEMPLATES.userprofilepage;
+          href = href.replace("//","/").replace("{userid}", data);
+          cell.innerHTML += "<a href='" + href + "' target='_blank'>" + data +"</a>";
+        };
+        var renderCellUserEmail = function(cell, record, column, data) {
           cell.innerHTML = $html(data);
         };
+
         var columnDefinitions = [{
-          key: "title",
+          key: "siteTitle",
           label: parent._msg("label.siteTitle"),
           sortable: true,
           formatter: renderCellTitle,
           width: 110
-        }, {
-          key: "shortName",
+        },{
+          key: "siteShortName",
           label: parent._msg("label.shortName"),
           sortable: true,
           formatter: renderCellShortName
-        }, {
-          key: "siteMembers",
-          label: parent._msg("label.members"),
+        },{
+          key: "role",
+          label: parent._msg("label.role"),
           sortable: true,
-          formatter: renderCellMembers
+          formatter: renderCellRole
+        },{
+          key: "fullName",
+          label: parent._msg("label.fullName"),
+          sortable: true,
+          formatter: renderCellFullName
+        }, {
+          key: "userId",
+          label: parent._msg("label.userName"),
+          sortable: true,
+          formatter: renderCellUserName
+        }, {
+          key: "email",
+          label: parent._msg("label.userEmail"),
+          sortable: true,
+          formatter: renderCellUserEmail
         }];
         parent.widgets.dataTableSite = new YAHOO.widget.DataTable(parent.id + "-statistics-sites-list", columnDefinitions, parent.widgets.dataSourceSite, {
           MSG_EMPTY: parent._msg("message.empty"),
