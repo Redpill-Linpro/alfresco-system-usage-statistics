@@ -61,7 +61,7 @@ if (typeof RL == "undefined" || !RL) {
       selectBox.onchange = this.OnChangeYearFilter;
       this.timerShowLoadingMessage = YAHOO.lang.later(2000, this, this.fnShowLoadingMessage);
       Alfresco.util.Ajax.request({
-        url: Alfresco.constants.PROXY_URI + "slingshot/doclib/treenode/node/alfresco/company/home/Data%20Dictionary/Redpill-Linpro/Statistics/SiteStatistics",
+        url: Alfresco.constants.PROXY_URI + "slingshot/doclib/treenode/node/alfresco/company/home/Data%20Dictionary/Redpill-Linpro/Statistics/UserEmailStatistics",
         responseContentType: Alfresco.util.Ajax.JSON,
         method: Alfresco.util.Ajax.GET,
         successCallback: {
