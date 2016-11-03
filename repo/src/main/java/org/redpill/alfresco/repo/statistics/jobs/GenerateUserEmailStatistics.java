@@ -125,7 +125,7 @@ public class GenerateUserEmailStatistics extends ClusteredExecuter {
 
 								Map<String, String> jsonMember = new HashMap<>();
 
-								NodeRef memberNodeRef = personService.getPerson(member);
+								NodeRef memberNodeRef = personService.getPersonOrNull(member);
 
 								Map<QName, Serializable> properties = nodeService.getProperties(memberNodeRef);
 
