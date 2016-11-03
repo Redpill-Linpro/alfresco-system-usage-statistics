@@ -126,23 +126,26 @@ public class GenerateUserEmailStatistics extends ClusteredExecuter {
 								Map<String, String> jsonMember = new HashMap<>();
 
 								NodeRef memberNodeRef = personService.getPersonOrNull(member);
+								if (memberNodeRef != null) {
 
-								Map<QName, Serializable> properties = nodeService.getProperties(memberNodeRef);
+									Map<QName, Serializable> properties = nodeService.getProperties(memberNodeRef);
 
-								String role = siteService.getMembersRole(site.getShortName(), member);
-								String userId = (String) properties.get(ContentModel.PROP_USERNAME);
-								String firstName = (String) properties.get(ContentModel.PROP_FIRSTNAME);
-								String lastName = (String) properties.get(ContentModel.PROP_LASTNAME);
-								String email = (String) properties.get(ContentModel.PROP_EMAIL);
+									String role = siteService.getMembersRole(site.getShortName(), member);
+									String userId = (String) properties.get(ContentModel.PROP_USERNAME);
+									String firstName = (String) properties.get(ContentModel.PROP_FIRSTNAME);
+									String lastName = (String) properties.get(ContentModel.PROP_LASTNAME);
+									String email = (String) properties.get(ContentModel.PROP_EMAIL);
 
-								jsonMember.put("role", role);
-								jsonMember.put("siteTitle", site.getTitle());
-								jsonMember.put("siteShortName", site.getShortName());
-								jsonMember.put("userId", userId);
-								jsonMember.put("fullName", firstName + " " + lastName);
-								jsonMember.put("email", email);
+									jsonMember.put("role", role);
+									jsonMember.put("siteTitle", site.getTitle());
+									jsonMember.put("siteShortName", site.getShortName());
+									jsonMember.put("userId", userId);
+									jsonMember.put("fullName", firstName + " " + lastName);
+									jsonMember.put("email", email);
 
-								siteResult.add(jsonMember);
+									siteResult.add(jsonMember);
+
+								}
 
 							}
 							siteResult.sort(new Comparator<Map>() {
@@ -166,7 +169,7 @@ public class GenerateUserEmailStatistics extends ClusteredExecuter {
 										return -1;
 									} else if ("SiteContributor".equals(role2)) {
 										return 1;
-									} 
+									}
 									return 1;
 								}
 							});
@@ -241,8 +244,8 @@ public class GenerateUserEmailStatistics extends ClusteredExecuter {
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		super.afterPropertiesSet();
-		//Assert.notNull(reportSiteUsage);
-		//Assert.notNull(repository);
+		// Assert.notNull(reportSiteUsage);
+		// Assert.notNull(repository);
 		Assert.notNull(contentService);
 		Assert.notNull(fileFolderService);
 		Assert.notNull(nodeService);
