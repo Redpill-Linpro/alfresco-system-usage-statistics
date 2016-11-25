@@ -61,7 +61,7 @@ if (typeof RL == "undefined" || !RL) {
       selectBox.onchange = this.OnChangeYearFilter;
       this.timerShowLoadingMessage = YAHOO.lang.later(2000, this, this.fnShowLoadingMessage);
       Alfresco.util.Ajax.request({
-        url: Alfresco.constants.PROXY_URI + "slingshot/doclib/treenode/node/alfresco/company/home/Data%20Dictionary/Redpill-Linpro/Statistics/UserEmailStatistics",
+        url: Alfresco.constants.PROXY_URI + "slingshot/doclib/treenode/node/alfresco/company/home/Redpill-Linpro/Statistics/UserEmailStatistics?libraryRoot=%2Fapp%3Acompany_home%2Fapp%3Adictionary",
         responseContentType: Alfresco.util.Ajax.JSON,
         method: Alfresco.util.Ajax.GET,
         successCallback: {
@@ -114,7 +114,7 @@ if (typeof RL == "undefined" || !RL) {
       var target = option.value;
       parent.timerShowLoadingMessage = YAHOO.lang.later(2000, this, parent.fnShowLoadingMessage);
       Alfresco.util.Ajax.request({
-        url: Alfresco.constants.PROXY_URI + "/slingshot/doclib2/doclist/all/node/alfresco/company/home/Data%20Dictionary/Redpill-Linpro/Statistics/UserEmailStatistics/" + target + "?sortField=cm%3acreated&sortAsc=false",
+        url: Alfresco.constants.PROXY_URI + "slingshot/doclib2/doclist/all/node/alfresco/company/home/Redpill-Linpro/Statistics/UserEmailStatistics/" + target + "?sortField=cm%3acreated&sortAsc=false&libraryRoot=%2Fapp%3Acompany_home%2Fapp%3Adictionary",
         responseContentType: Alfresco.util.Ajax.JSON,
         method: Alfresco.util.Ajax.GET,
         successCallback: {
