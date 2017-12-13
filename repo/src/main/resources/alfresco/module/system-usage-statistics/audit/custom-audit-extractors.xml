@@ -15,8 +15,10 @@
     <PathMap source="/alfresco-api/post/AuthenticationService/authenticate"
              target="/stats-authentication/login" />
     <!-- Uncomment to log also all SSO ticket validations -->
+<!--
     <PathMap source="/alfresco-api/post/ticketComponent/validateTicket"
              target="/stats-authentication/login" />
+-->
   </PathMappings>
 
   <Application name="stats-authentication" key="stats-authentication">
