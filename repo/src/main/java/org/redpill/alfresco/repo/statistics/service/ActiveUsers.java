@@ -24,6 +24,7 @@ public class ActiveUsers implements InitializingBean {
 
   private final static Logger LOG = Logger.getLogger(ActiveUsers.class);
   private static final String FULL_NAME_PATH = "/stats-authentication/login/no-error/fullName";
+  private static final int AUDIT_QUERY_MAX_RESULT = 500000;
   protected String internalUsersZoneName;
 
   public static final String INTERNAL_USERS = "internal";
@@ -203,7 +204,7 @@ public class ActiveUsers implements InitializingBean {
 
     parameters.setToTime(now.getTime());
     LOG.debug("Performing audit query, startTime: " + startTime + " toTime: " + now.getTime() + " msBack: " + msBack);
-    _auditService.auditQuery(callback, parameters, 0);
+    _auditService.auditQuery(callback, parameters, AUDIT_QUERY_MAX_RESULT);
 
     // Filter out users who are not active
     for (UserLoginDetails user : resultMap.values()) {
