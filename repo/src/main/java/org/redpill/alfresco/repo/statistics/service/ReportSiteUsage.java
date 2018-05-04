@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.query.PagingRequest;
 import org.alfresco.service.cmr.activities.ActivityService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
@@ -20,6 +19,7 @@ import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.security.PersonService.PersonInfo;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.site.SiteService;
+import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO8601DateFormat;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
@@ -41,6 +41,7 @@ public class ReportSiteUsage implements InitializingBean {
   private PersonService _personService;
 
   public static final String DOCUMENT_LIBRARY = "documentLibrary";
+  private static final QName SMART_FOLDER_ASPECT = QName.createQName("http://www.alfresco.org/model/content/smartfolder/1.0", "smartFolder");
 
   public void setPersonService(PersonService personService) {
     this._personService = personService;
@@ -98,7 +99,7 @@ public class ReportSiteUsage implements InitializingBean {
 
         for (FileInfo folderInfo : allFolders) {
           NodeRef folderNodeRef = folderInfo.getNodeRef();
-          if (folderNodeRef != null && _nodeService.exists(folderNodeRef)) {
+          if (folderNodeRef != null && _nodeService.exists(folderNodeRef) && !_nodeService.hasAspect(folderNodeRef, SMART_FOLDER_ASPECT)) {
             listFiles = _fileFolderService.listFiles(folderNodeRef);
 
             for (FileInfo fileInfo : listFiles) {
