@@ -12,6 +12,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.activities.ActivityService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentData;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -39,9 +40,11 @@ public class ReportSiteUsage implements InitializingBean {
   private SiteService _siteService;
 
   private PersonService _personService;
+  private static final int UUID_LENGTH = 36;
 
   public static final String DOCUMENT_LIBRARY = "documentLibrary";
   private static final QName SMART_FOLDER_ASPECT = QName.createQName("http://www.alfresco.org/model/content/smartfolder/1.0", "smartFolder");
+  private static final QName SMART_FOLDER_CHILD_ASPECT = QName.createQName("http://www.alfresco.org/model/content/smartfolder/1.0", "smartFolderChild");
 
   public void setPersonService(PersonService personService) {
     this._personService = personService;
@@ -95,12 +98,14 @@ public class ReportSiteUsage implements InitializingBean {
         }
 
         // List all folders and calculate site for all files
-        List<FileInfo> allFolders = _fileFolderService.listDeepFolders(dlNodeRef, null);
+        List<NodeRef> folders = new ArrayList<>();
+        getDeepFolders(dlNodeRef, folders);
 
-        for (FileInfo folderInfo : allFolders) {
-          NodeRef folderNodeRef = folderInfo.getNodeRef();
-          if (folderNodeRef != null && _nodeService.exists(folderNodeRef) && !_nodeService.hasAspect(folderNodeRef, SMART_FOLDER_ASPECT)) {
-            listFiles = _fileFolderService.listFiles(folderNodeRef);
+        for (NodeRef folder : folders) {
+          if (folder != null && _nodeService.exists(folder)
+                  && !_nodeService.hasAspect(folder, SMART_FOLDER_ASPECT)
+                  && !_nodeService.hasAspect(folder, SMART_FOLDER_CHILD_ASPECT)) {
+            listFiles = _fileFolderService.listFiles(folder);
 
             for (FileInfo fileInfo : listFiles) {
               ContentData contentData = fileInfo.getContentData();
@@ -119,6 +124,24 @@ public class ReportSiteUsage implements InitializingBean {
     } else {
       LOG.warn("Site could not be found:" + shortName);
       return 0;
+    }
+  }
+
+  public void getDeepFolders(NodeRef nodeRef, List<NodeRef> folders) {
+    try {
+      List<ChildAssociationRef> children = _nodeService.getChildAssocs(nodeRef);
+      for(ChildAssociationRef child : children) {
+        NodeRef childRef = child.getChildRef();
+        if(_nodeService.getType(childRef).equals(ContentModel.TYPE_FOLDER)) {
+          folders.add(childRef);
+          if (childRef.getId().length() > UUID_LENGTH) {
+            continue;
+          }
+          getDeepFolders(childRef, folders);
+        }
+      }
+    } catch (Exception e) {
+      LOG.error("Error processing node: " + nodeRef + " with exception: " + e);
     }
   }
 
