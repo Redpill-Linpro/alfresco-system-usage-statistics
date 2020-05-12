@@ -40,6 +40,7 @@ public class ReportSiteUsage implements InitializingBean {
   private SiteService _siteService;
 
   private PersonService _personService;
+  private static final int UUID_LENGTH = 36;
 
   public static final String DOCUMENT_LIBRARY = "documentLibrary";
   private static final QName SMART_FOLDER_ASPECT = QName.createQName("http://www.alfresco.org/model/content/smartfolder/1.0", "smartFolder");
@@ -127,13 +128,20 @@ public class ReportSiteUsage implements InitializingBean {
   }
 
   public void getDeepFolders(NodeRef nodeRef, List<NodeRef> folders) {
-    List<ChildAssociationRef> children = _nodeService.getChildAssocs(nodeRef);
-    for(ChildAssociationRef child : children) {
-      NodeRef childRef = child.getChildRef();
-      if(_nodeService.getType(childRef).equals(ContentModel.TYPE_FOLDER)) {
-        folders.add(childRef);
-        getDeepFolders(childRef, folders);
+    try {
+      List<ChildAssociationRef> children = _nodeService.getChildAssocs(nodeRef);
+      for(ChildAssociationRef child : children) {
+        NodeRef childRef = child.getChildRef();
+        if(_nodeService.getType(childRef).equals(ContentModel.TYPE_FOLDER)) {
+          folders.add(childRef);
+          if (childRef.getId().length() > UUID_LENGTH) {
+            continue;
+          }
+          getDeepFolders(childRef, folders);
+        }
       }
+    } catch (Exception e) {
+      LOG.error("Error processing node: " + nodeRef + " with exception: " + e);
     }
   }
 
