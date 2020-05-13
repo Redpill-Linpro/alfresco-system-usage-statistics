@@ -11,9 +11,12 @@ import org.alfresco.util.PropertyCheck;
 import org.alfresco.util.VmShutdownListener;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.InitializingBean;
 
-public abstract class ClusteredExecuter implements InitializingBean {
+public abstract class ClusteredExecuter implements Job, InitializingBean {
 
   private static Logger LOG = Logger.getLogger(ClusteredExecuter.class);
 
@@ -45,7 +48,8 @@ public abstract class ClusteredExecuter implements InitializingBean {
     _repositoryState = repositoryState;
   }
 
-  public void execute() {
+  @Override
+  public void execute(JobExecutionContext jobCtx) throws JobExecutionException {
     // Bypass if the system is in read-only mode
     if (_transactionService.isReadOnly()) {
       LOG.debug(getJobName() + " bypassed; the system is read-only.");
