@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>alfresco-system-usage-statistics-integration-tests</artifactId>
+    <name>Alfresco System Usage Statistics - Integration Tests Module</name>
+    <description>Integration Tests module for in-container integration testing - part of AIO - SDK 4.4</description>
+    <packaging>jar</packaging> <!-- Note. this just runs Integration Tests, but it needs to be a JAR otherwise
+                                            nothing is compiled (i.e. you cannot set it to pom) -->
+
+    <parent>
+        <groupId>org.redpill-linpro.alfresco.statistics</groupId>
+        <artifactId>alfresco-system-usage-statistics</artifactId>
+        <version>1.2.0</version>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.redpill-linpro.alfresco.statistics</groupId>
+            <artifactId>alfresco-system-usage-statistics-platform</artifactId>
+            <version>1.2.0</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
+
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <acs.endpoint.path>${test.acs.endpoint.path}</acs.endpoint.path>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

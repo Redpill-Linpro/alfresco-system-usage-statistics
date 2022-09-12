@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>alfresco-system-usage-statistics-platform</artifactId>
+    <name>Alfresco System Usage Statistics - Platform</name>
+    <description>Alfresco System Usage Statistics - Platform</description>
+    <packaging>jar</packaging>
+
+    <parent>
+        <groupId>org.redpill-linpro.alfresco.statistics</groupId>
+        <artifactId>alfresco-system-usage-statistics</artifactId>
+        <version>1.2.0</version>
+    </parent>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
