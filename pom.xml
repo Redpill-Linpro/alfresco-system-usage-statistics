@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.redpill-linpro.alfresco.statistics</groupId>
   <artifactId>alfresco-system-usage-statistics</artifactId>
-  <version>1.2.0</version>
+  <version>1.3.0-SNAPSHOT</version>
   <name>Alfresco System Usage Statistics</name>
   <description>Statistics gathering module for Alfresco, compatible with Alfresco 7.4.x and SDK 4.6</description>
   <packaging>pom</packaging>
