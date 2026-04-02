@@ -2,9 +2,9 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.redpill-linpro.alfresco.statistics</groupId>
   <artifactId>alfresco-system-usage-statistics</artifactId>
-  <version>1.2.0-SNAPSHOT</version>
-  <name>AIO - SDK 4.6</name>
-  <description>All-In-One (AIO) project for SDK 4.6</description>
+  <version>1.2.0</version>
+  <name>Alfresco System Usage Statistics</name>
+  <description>Statistics gathering module for Alfresco, compatible with Alfresco 7.4.x and SDK 4.6</description>
   <packaging>pom</packaging>
   <prerequisites>
     <maven>3.3.0</maven>
