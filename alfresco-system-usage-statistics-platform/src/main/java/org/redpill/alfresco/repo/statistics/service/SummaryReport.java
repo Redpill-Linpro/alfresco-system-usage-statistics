@@ -100,10 +100,10 @@ public class SummaryReport implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    Assert.notNull(activeUsers);
-    Assert.notNull(personService);
-    Assert.notNull(reportSiteUsage);
-    Assert.notNull(searchService);
-    Assert.notNull(siteService);
+    Assert.notNull(activeUsers, "activeUsers is required");
+    Assert.notNull(personService, "personService is required");
+    Assert.notNull(reportSiteUsage, "reportSiteUsage is required");
+    Assert.notNull(searchService, "searchService is required");
+    Assert.notNull(siteService, "siteService is required");
   }
 }

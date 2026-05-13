@@ -219,10 +219,10 @@ public class ActiveUsers implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    Assert.notNull(internalUsersZoneName);
-    Assert.notNull(_nodeService);
-    Assert.notNull(_personService);
-    Assert.notNull(_auditService);
+    Assert.notNull(internalUsersZoneName, "internalUsersZoneName is required");
+    Assert.notNull(_nodeService, "_nodeService is required");
+    Assert.notNull(_personService, "_personService is required");
+    Assert.notNull(_auditService, "_auditService is required");
   }
 
 }

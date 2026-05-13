@@ -245,15 +245,15 @@ public class GenerateUserEmailStatistics extends ClusteredExecuter {
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		super.afterPropertiesSet();
-		// Assert.notNull(reportSiteUsage);
-		// Assert.notNull(repository);
-		Assert.notNull(contentService);
-		Assert.notNull(fileFolderService);
-		Assert.notNull(nodeService);
-		Assert.notNull(namespaceService);
-		Assert.notNull(searchService);
-		Assert.notNull(siteService);
-		Assert.notNull(personService);
+		// Assert.notNull(reportSiteUsage, "reportSiteUsage is required");
+		// Assert.notNull(repository, "repository is required");
+		Assert.notNull(contentService, "contentService is required");
+		Assert.notNull(fileFolderService, "fileFolderService is required");
+		Assert.notNull(nodeService, "nodeService is required");
+		Assert.notNull(namespaceService, "namespaceService is required");
+		Assert.notNull(searchService, "searchService is required");
+		Assert.notNull(siteService, "siteService is required");
+		Assert.notNull(personService, "personService is required");
 		LOG.debug("Initialized " + GenerateUserEmailStatistics.class.getName());
 	}
 

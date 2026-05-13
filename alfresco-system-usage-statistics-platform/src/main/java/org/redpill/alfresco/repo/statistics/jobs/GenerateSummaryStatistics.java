@@ -164,14 +164,14 @@ public class GenerateSummaryStatistics extends ClusteredExecuter {
   @Override
   public void afterPropertiesSet() throws Exception {
     super.afterPropertiesSet();
-    Assert.notNull(summaryReport);
-    Assert.notNull(repository);
-    Assert.notNull(contentService);
-    Assert.notNull(fileFolderService);
-    Assert.notNull(nodeService);
-    Assert.notNull(namespaceService);
-    Assert.notNull(searchService);
-    Assert.notNull(siteService);
+    Assert.notNull(summaryReport, "summaryReport is required");
+    Assert.notNull(repository, "repository is required");
+    Assert.notNull(contentService, "contentService is required");
+    Assert.notNull(fileFolderService, "fileFolderService is required");
+    Assert.notNull(nodeService, "nodeService is required");
+    Assert.notNull(namespaceService, "namespaceService is required");
+    Assert.notNull(searchService, "searchService is required");
+    Assert.notNull(siteService, "siteService is required");
     LOG.info("Initialized " + GenerateSummaryStatistics.class.getName());
   }
 

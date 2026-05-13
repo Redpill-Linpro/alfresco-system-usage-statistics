@@ -341,11 +341,11 @@ public class ReportSiteUsage implements InitializingBean {
   
   @Override
   public void afterPropertiesSet() throws Exception {
-    Assert.notNull(_activityService);
-    Assert.notNull(_fileFolderService);
-    Assert.notNull(_nodeService);
-    Assert.notNull(_siteService);
-    Assert.notNull(_personService);
+    Assert.notNull(_activityService, "_activityService is required");
+    Assert.notNull(_fileFolderService, "_fileFolderService is required");
+    Assert.notNull(_nodeService, "_nodeService is required");
+    Assert.notNull(_siteService, "_siteService is required");
+    Assert.notNull(_personService, "_personService is required");
   }
 
 }

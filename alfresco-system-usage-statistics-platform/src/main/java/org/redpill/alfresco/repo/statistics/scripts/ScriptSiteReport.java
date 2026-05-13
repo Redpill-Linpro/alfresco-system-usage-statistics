@@ -51,8 +51,8 @@ public class ScriptSiteReport extends BaseScopableProcessorExtension implements 
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    Assert.notNull(_siteService);
-    Assert.notNull(_reportSiteUsage);
+    Assert.notNull(_siteService, "_siteService is required");
+    Assert.notNull(_reportSiteUsage, "_reportSiteUsage is required");
   }
 
 }

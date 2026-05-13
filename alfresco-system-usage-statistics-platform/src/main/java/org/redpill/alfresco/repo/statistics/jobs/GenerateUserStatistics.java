@@ -152,13 +152,13 @@ public class GenerateUserStatistics extends ClusteredExecuter {
   @Override
   public void afterPropertiesSet() throws Exception {
     super.afterPropertiesSet();
-    Assert.notNull(activeUsers);
-    Assert.notNull(repository);
-    Assert.notNull(contentService);
-    Assert.notNull(fileFolderService);
-    Assert.notNull(nodeService);
-    Assert.notNull(namespaceService);
-    Assert.notNull(searchService);
+    Assert.notNull(activeUsers, "activeUsers is required");
+    Assert.notNull(repository, "repository is required");
+    Assert.notNull(contentService, "contentService is required");
+    Assert.notNull(fileFolderService, "fileFolderService is required");
+    Assert.notNull(nodeService, "nodeService is required");
+    Assert.notNull(namespaceService, "namespaceService is required");
+    Assert.notNull(searchService, "searchService is required");
     LOG.info("Initialized " + GenerateUserStatistics.class.getName());
   }
 
