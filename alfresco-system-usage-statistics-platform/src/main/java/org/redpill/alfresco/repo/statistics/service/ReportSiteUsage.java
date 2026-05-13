@@ -18,6 +18,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.security.PersonService.PersonInfo;
+import org.alfresco.service.cmr.site.SiteMemberInfo;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.QName;
@@ -339,6 +340,78 @@ public class ReportSiteUsage implements InitializingBean {
     return result;
   }
   
+  /**
+   * Get the date of the most recently modified document in the site's document library.
+   *
+   * @param siteShortName site short name
+   * @return the date of the last document modification, or null if the site has no documents
+   */
+  public Date getLastDocumentModified(String siteShortName) {
+    if (LOG.isTraceEnabled()) {
+      LOG.trace("Getting last document modified date for site: " + siteShortName);
+    }
+    NodeRef siteNodeRef = _siteService.getSite(siteShortName).getNodeRef();
+    if (siteNodeRef == null || !_nodeService.exists(siteNodeRef)) {
+      return null;
+    }
+    NodeRef dlNodeRef = _fileFolderService.searchSimple(siteNodeRef, DOCUMENT_LIBRARY);
+    if (dlNodeRef == null || !_nodeService.exists(dlNodeRef)) {
+      return null;
+    }
+
+    Date lastModified = null;
+
+    for (FileInfo fileInfo : _fileFolderService.listFiles(dlNodeRef)) {
+      Date modified = fileInfo.getModifiedDate();
+      if (modified != null && (lastModified == null || modified.after(lastModified))) {
+        lastModified = modified;
+      }
+    }
+
+    List<NodeRef> folders = new ArrayList<>();
+    getDeepFolders(dlNodeRef, folders);
+    for (NodeRef folder : folders) {
+      if (folder != null && _nodeService.exists(folder)
+              && !_nodeService.hasAspect(folder, SMART_FOLDER_ASPECT)
+              && !_nodeService.hasAspect(folder, SMART_FOLDER_CHILD_ASPECT)) {
+        for (FileInfo fileInfo : _fileFolderService.listFiles(folder)) {
+          Date modified = fileInfo.getModifiedDate();
+          if (modified != null && (lastModified == null || modified.after(lastModified))) {
+            lastModified = modified;
+          }
+        }
+      }
+    }
+    return lastModified;
+  }
+
+  /**
+   * Returns all members of a site with their roles.
+   *
+   * @param siteShortName site short name
+   * @return list of maps with userName, fullName and role
+   */
+  public List<Map<String, Serializable>> getSiteMembersWithRoles(String siteShortName) {
+    if (LOG.isTraceEnabled()) {
+      LOG.trace("Getting members with roles for site: " + siteShortName);
+    }
+    List<Map<String, Serializable>> result = new ArrayList<>();
+    List<SiteMemberInfo> membersInfo = _siteService.listMembersInfo(siteShortName, null, null, 0, true);
+    for (SiteMemberInfo memberInfo : membersInfo) {
+      String userName = memberInfo.getMemberName();
+      NodeRef personNodeRef = _personService.getPersonOrNull(userName);
+      if (personNodeRef != null) {
+        PersonInfo person = _personService.getPerson(personNodeRef);
+        Map<String, Serializable> memberMap = new HashMap<>();
+        memberMap.put("userName", person.getUserName());
+        memberMap.put("fullName", person.getFirstName() + " " + person.getLastName());
+        memberMap.put("role", memberInfo.getMemberRole());
+        result.add(memberMap);
+      }
+    }
+    return result;
+  }
+
   @Override
   public void afterPropertiesSet() throws Exception {
     Assert.notNull(_activityService, "_activityService is required");

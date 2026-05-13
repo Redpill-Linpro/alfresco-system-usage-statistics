@@ -302,6 +302,32 @@ if (typeof RL == "undefined" || !RL) {
         var renderCellLastActivity = function(cell, record, column, data) {
           cell.innerHTML = $html(data);
         };
+        var renderCellLastDocumentModified = function(cell, record, column, data) {
+          cell.innerHTML = $html(data || "");
+        };
+        var renderSiteMembersWithRoles = function(cell, record, column, data) {
+          if (!data || data.length === 0) {
+            return;
+          }
+          var roleLabels = {
+            "SiteManager": parent._msg("label.role.manager"),
+            "SiteCollaborator": parent._msg("label.role.collaborator"),
+            "SiteContributor": parent._msg("label.role.contributor"),
+            "SiteConsumer": parent._msg("label.role.consumer")
+          };
+          for (var x = 0; x < data.length; x++) {
+            var member = data[x];
+            var userid = member.userName;
+            var fullname = member.fullName.trim();
+            var roleKey = member.role;
+            var roleLabel = roleLabels[roleKey] || roleKey;
+            var href = Alfresco.constants.URL_PAGECONTEXT + "user/" + userid + "/profile";
+            if (cell.innerHTML.length > 0) {
+              cell.innerHTML += "<br/>";
+            }
+            cell.innerHTML += "<a href='" + href + "' target='_blank'>" + $html(fullname) + " (" + $html(userid) + ")</a> &ndash; " + $html(roleLabel);
+          }
+        };
         var renderSiteManagers = function(cell, record, column, data) {
           for (var x = 0; x < data.length; x++) {
             var manager = data[x];
@@ -341,10 +367,20 @@ if (typeof RL == "undefined" || !RL) {
           sortable: true,
           formatter: renderCellLastActivity
         }, {
+          key: "lastDocumentModified",
+          label: parent._msg("label.lastDocumentModified"),
+          sortable: true,
+          formatter: renderCellLastDocumentModified
+        }, {
           key: "siteManagers",
           label: parent._msg("label.siteManagers"),
           sortable: true,
           formatter: renderSiteManagers
+        }, {
+          key: "siteMembersWithRoles",
+          label: parent._msg("label.siteMembersWithRoles"),
+          sortable: false,
+          formatter: renderSiteMembersWithRoles
         }];
         parent.widgets.dataTableSite = new YAHOO.widget.DataTable(parent.id + "-statistics-sites-list", columnDefinitions, parent.widgets.dataSourceSite, {
           MSG_EMPTY: parent._msg("message.empty"),

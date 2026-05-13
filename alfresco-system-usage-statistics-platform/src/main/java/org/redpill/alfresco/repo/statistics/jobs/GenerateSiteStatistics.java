@@ -116,6 +116,10 @@ public class GenerateSiteStatistics extends ClusteredExecuter {
               site.put("siteSize", siteSize);
               List<Map<String, Serializable>> siteManagers = reportSiteUsage.getSiteManagers(shortName);
               site.put("siteManagers", siteManagers);
+              Date lastDocumentModified = reportSiteUsage.getLastDocumentModified(shortName);
+              site.put("lastDocumentModified", lastDocumentModified);
+              List<Map<String, Serializable>> siteMembersWithRoles = reportSiteUsage.getSiteMembersWithRoles(shortName);
+              site.put("siteMembersWithRoles", siteMembersWithRoles);
             }
             String json = createJson(allSites);
             storeResult(json);
