@@ -18,6 +18,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.security.PersonService.PersonInfo;
+import org.alfresco.service.cmr.site.SiteMemberInfo;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.QName;
@@ -68,64 +69,87 @@ public class ReportSiteUsage implements InitializingBean {
   }
 
   /**
-   * Get the total size for all files and folders in a site in bytes
-   *
-   * @param shortName
-   *          site short name
-   * @return
+   * Holds the combined result of a single document library traversal.
    */
-  public long getSiteSize(String shortName) {
-    if (LOG.isTraceEnabled()) {
-      LOG.trace("Getting site size for site with shortName: " + shortName);
+  public static class SiteSizeAndLastModified {
+    public final long siteSize;
+    public final Date lastModified;
+
+    public SiteSizeAndLastModified(long siteSize, Date lastModified) {
+      this.siteSize = siteSize;
+      this.lastModified = lastModified;
     }
-    long size = 0;
+  }
+
+  /**
+   * Traverse the document library once and return both total size (bytes) and
+   * the date of the most recently modified document.
+   *
+   * @param shortName site short name
+   * @return combined result; never null
+   */
+  public SiteSizeAndLastModified getSiteSizeAndLastModified(String shortName) {
+    if (LOG.isTraceEnabled()) {
+      LOG.trace("Getting site size and last modified date for site: " + shortName);
+    }
     NodeRef siteNodeRef = _siteService.getSite(shortName).getNodeRef();
+    if (siteNodeRef == null || !_nodeService.exists(siteNodeRef)) {
+      LOG.warn("Site could not be found: " + shortName);
+      return new SiteSizeAndLastModified(0, null);
+    }
+    NodeRef dlNodeRef = _fileFolderService.searchSimple(siteNodeRef, DOCUMENT_LIBRARY);
+    if (dlNodeRef == null || !_nodeService.exists(dlNodeRef)) {
+      return new SiteSizeAndLastModified(0, null);
+    }
 
-    if (siteNodeRef != null && _nodeService.exists(siteNodeRef)) {
-      NodeRef dlNodeRef = _fileFolderService.searchSimple(siteNodeRef, DOCUMENT_LIBRARY);
+    long size = 0;
+    Date lastModified = null;
 
-      if (dlNodeRef != null && _nodeService.exists(dlNodeRef)) {
-        // List files in document library root and calculate size
-        List<FileInfo> listFiles = _fileFolderService.listFiles(dlNodeRef);
+    List<FileInfo> listFiles = _fileFolderService.listFiles(dlNodeRef);
+    for (FileInfo fileInfo : listFiles) {
+      ContentData contentData = fileInfo.getContentData();
+      if (contentData != null) {
+        size += contentData.getSize();
+      }
+      Date modified = fileInfo.getModifiedDate();
+      if (modified != null && (lastModified == null || modified.after(lastModified))) {
+        lastModified = modified;
+      }
+    }
 
+    List<NodeRef> folders = new ArrayList<>();
+    getDeepFolders(dlNodeRef, folders);
+    for (NodeRef folder : folders) {
+      if (folder != null && _nodeService.exists(folder)
+              && !_nodeService.hasAspect(folder, SMART_FOLDER_ASPECT)
+              && !_nodeService.hasAspect(folder, SMART_FOLDER_CHILD_ASPECT)) {
+        listFiles = _fileFolderService.listFiles(folder);
         for (FileInfo fileInfo : listFiles) {
           ContentData contentData = fileInfo.getContentData();
-
-          if (contentData == null) {
-            continue;
+          if (contentData != null) {
+            size += contentData.getSize();
           }
-
-          size = size + contentData.getSize();
-        }
-
-        // List all folders and calculate site for all files
-        List<NodeRef> folders = new ArrayList<>();
-        getDeepFolders(dlNodeRef, folders);
-
-        for (NodeRef folder : folders) {
-          if (folder != null && _nodeService.exists(folder)
-                  && !_nodeService.hasAspect(folder, SMART_FOLDER_ASPECT)
-                  && !_nodeService.hasAspect(folder, SMART_FOLDER_CHILD_ASPECT)) {
-            listFiles = _fileFolderService.listFiles(folder);
-
-            for (FileInfo fileInfo : listFiles) {
-              ContentData contentData = fileInfo.getContentData();
-
-              if (contentData == null) {
-                continue;
-              }
-
-              size = size + contentData.getSize();
-            }
+          Date modified = fileInfo.getModifiedDate();
+          if (modified != null && (lastModified == null || modified.after(lastModified))) {
+            lastModified = modified;
           }
         }
       }
-
-      return size;
-    } else {
-      LOG.warn("Site could not be found:" + shortName);
-      return 0;
     }
+
+    return new SiteSizeAndLastModified(size, lastModified);
+  }
+
+  /**
+   * Get the total size for all files and folders in a site in bytes
+   *
+   * @param shortName site short name
+   * @return
+   * @deprecated Use {@link #getSiteSizeAndLastModified(String)} to avoid a redundant traversal.
+   */
+  @Deprecated
+  public long getSiteSize(String shortName) {
+    return getSiteSizeAndLastModified(shortName).siteSize;
   }
 
   public void getDeepFolders(NodeRef nodeRef, List<NodeRef> folders) {
@@ -339,6 +363,45 @@ public class ReportSiteUsage implements InitializingBean {
     return result;
   }
   
+  /**
+   * Get the date of the most recently modified document in the site's document library.
+   *
+   * @param siteShortName site short name
+   * @return the date of the last document modification, or null if the site has no documents
+   * @deprecated Use {@link #getSiteSizeAndLastModified(String)} to avoid a redundant traversal.
+   */
+  @Deprecated
+  public Date getLastDocumentModified(String siteShortName) {
+    return getSiteSizeAndLastModified(siteShortName).lastModified;
+  }
+
+  /**
+   * Returns all members of a site with their roles.
+   *
+   * @param siteShortName site short name
+   * @return list of maps with userName, fullName and role
+   */
+  public List<Map<String, Serializable>> getSiteMembersWithRoles(String siteShortName) {
+    if (LOG.isTraceEnabled()) {
+      LOG.trace("Getting members with roles for site: " + siteShortName);
+    }
+    List<Map<String, Serializable>> result = new ArrayList<>();
+    List<SiteMemberInfo> membersInfo = _siteService.listMembersInfo(siteShortName, null, null, 0, true);
+    for (SiteMemberInfo memberInfo : membersInfo) {
+      String userName = memberInfo.getMemberName();
+      NodeRef personNodeRef = _personService.getPersonOrNull(userName);
+      if (personNodeRef != null) {
+        PersonInfo person = _personService.getPerson(personNodeRef);
+        Map<String, Serializable> memberMap = new HashMap<>();
+        memberMap.put("userName", person.getUserName());
+        memberMap.put("fullName", person.getFirstName() + " " + person.getLastName());
+        memberMap.put("role", memberInfo.getMemberRole());
+        result.add(memberMap);
+      }
+    }
+    return result;
+  }
+
   @Override
   public void afterPropertiesSet() throws Exception {
     Assert.notNull(_activityService, "_activityService is required");
