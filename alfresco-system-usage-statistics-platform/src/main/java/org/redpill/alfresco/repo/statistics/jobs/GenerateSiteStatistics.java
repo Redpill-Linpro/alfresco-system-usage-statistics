@@ -1,6 +1,7 @@
 package org.redpill.alfresco.repo.statistics.jobs;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -26,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import org.redpill.alfresco.repo.statistics.service.ReportSiteUsage;
+import org.redpill.alfresco.repo.statistics.service.ReportSiteUsage.SiteSizeAndLastModified;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -91,41 +93,62 @@ public class GenerateSiteStatistics extends ClusteredExecuter {
     AuthenticationUtil.runAs(new RunAsWork<Void>() {
       @Override
       public Void doWork() throws Exception {
-        RetryingTransactionHelper transactionHelper = _transactionService.getRetryingTransactionHelper();
+        final RetryingTransactionHelper transactionHelper = _transactionService.getRetryingTransactionHelper();
+
+        final List<Map<String, Object>> allSites = transactionHelper.doInTransaction(
+            new RetryingTransactionCallback<List<Map<String, Object>>>() {
+              @Override
+              public List<Map<String, Object>> execute() throws Throwable {
+                return reportSiteUsage.getAllSites();
+              }
+            }, true, false);
+
+        LOG.info("Found " + allSites.size() + " sites to generate statistics for");
+
+        final List<Map<String, Object>> processedSites = new ArrayList<>();
+        int i = 0;
+        for (final Map<String, Object> site : allSites) {
+          i++;
+          final String shortName = (String) site.get("shortName");
+          if (shortName == null || shortName.length() == 0) {
+            continue;
+          }
+          if (LOG.isDebugEnabled()) {
+            LOG.debug("Getting statistics for " + shortName + " " + i + "/" + allSites.size());
+          }
+          try {
+            transactionHelper.doInTransaction(new RetryingTransactionCallback<Void>() {
+              @Override
+              public Void execute() throws Throwable {
+                Date lastActivityOnSite = reportSiteUsage.getLastActivityOnSite(shortName);
+                site.put("lastActivity", lastActivityOnSite);
+                int numberOfSiteMembers = reportSiteUsage.getNumberOfSiteMembers(shortName);
+                site.put("siteMembers", numberOfSiteMembers);
+                SiteSizeAndLastModified sizeAndModified = reportSiteUsage.getSiteSizeAndLastModified(shortName);
+                site.put("siteSize", sizeAndModified.siteSize);
+                site.put("lastDocumentModified", sizeAndModified.lastModified);
+                List<Map<String, Serializable>> siteManagers = reportSiteUsage.getSiteManagers(shortName);
+                site.put("siteManagers", siteManagers);
+                List<Map<String, Serializable>> siteMembersWithRoles = reportSiteUsage.getSiteMembersWithRoles(shortName);
+                site.put("siteMembersWithRoles", siteMembersWithRoles);
+                return null;
+              }
+            }, false, false);
+            processedSites.add(site);
+          } catch (Exception e) {
+            LOG.error("Failed to collect statistics for site '" + shortName + "', skipping", e);
+          }
+        }
+
         transactionHelper.doInTransaction(new RetryingTransactionCallback<Void>() {
           @Override
           public Void execute() throws Throwable {
-            final List<Map<String, Object>> allSites = reportSiteUsage.getAllSites();
-            LOG.info("Found " + allSites.size() + " sites to generate statistics for");
-            int i = 0;
-            for (final Map<String, Object> site : allSites) {
-              i++;
-              String shortName = (String) site.get("shortName");
-              if (LOG.isDebugEnabled()) {
-                LOG.debug("Getting statistics for " + shortName + " " + i + "/" + allSites.size());
-              }
-              if (shortName == null || shortName.length() == 0) {
-                allSites.remove(site);
-                continue;
-              }
-              Date lastActivityOnSite = reportSiteUsage.getLastActivityOnSite(shortName);
-              site.put("lastActivity", lastActivityOnSite);
-              int numberOfSiteMembers = reportSiteUsage.getNumberOfSiteMembers(shortName);
-              site.put("siteMembers", numberOfSiteMembers);
-              long siteSize = reportSiteUsage.getSiteSize(shortName);
-              site.put("siteSize", siteSize);
-              List<Map<String, Serializable>> siteManagers = reportSiteUsage.getSiteManagers(shortName);
-              site.put("siteManagers", siteManagers);
-              Date lastDocumentModified = reportSiteUsage.getLastDocumentModified(shortName);
-              site.put("lastDocumentModified", lastDocumentModified);
-              List<Map<String, Serializable>> siteMembersWithRoles = reportSiteUsage.getSiteMembersWithRoles(shortName);
-              site.put("siteMembersWithRoles", siteMembersWithRoles);
-            }
-            String json = createJson(allSites);
+            String json = createJson(processedSites);
             storeResult(json);
             return null;
           }
         }, false, false);
+
         return null;
       }
     }, AuthenticationUtil.SYSTEM_USER_NAME);
